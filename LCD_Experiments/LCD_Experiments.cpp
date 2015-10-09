@@ -7,15 +7,16 @@ SainSmart ST7735 LCD/microSD module
 www.sainsmart.com
 
 
-Signal Definition:
-•	GND 	: Power Ground
-•	VCC 	: 5V power input
-•	CS 	: Chipselect for LCD,
-•	SDA 	: LCD Data for SPI
-•	SCL 	: SCLK for TFT Clock
-•	RS/DC 	: Command/Data Selection
-•	RESET 	: LCD controller reset, active low
-•	CS (SD-CS) 	: Chipselect for TF Card,
+Signal Definition TFT LCD):
+•	GND 	        : Power Ground
+•	VCC 	        : 5V power input
+•	CS  	        : Chipselect for LCD, (use pin 10)
+•	SDA 	        : LCD Data for SPI (use MOSI, pin 11)
+•	SCL 	        : SCLK for TFT Clock (use SCLK, pin 13)
+•	RS/DC 	        : Command/Data Selection (use pin 9)
+•	RESET 	        : LCD controller reset, active low (use pin 8)
+Signal Definition micro-SD):
+•	CS (SD-CS) 	    : Chipselect for TF Card,
 •	CLK (SD-Clock)	: SPI Clock
 •	MOSI (SD-DI) 	: SPI Master out Slave in
 •	MISO (SD-DO) 	: SPI Master in Slave out
