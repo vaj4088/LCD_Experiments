@@ -9,7 +9,7 @@ www.sainsmart.com
 
 Signal Definition TFT LCD):
 •	GND 	        : Power Ground
-•	VCC 	        : 5V power input
+•	VCC 	        : 5V power input (3.3V might work)
 •	CS  	        : Chipselect for LCD, (use pin 10)
 •	SDA 	        : LCD Data for SPI (use MOSI, pin 11)
 •	SCL 	        : SCLK for TFT Clock (use SCLK, pin 13)
