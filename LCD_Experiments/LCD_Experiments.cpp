@@ -114,6 +114,14 @@ Low level:
 Commented out:
   void dummyclock(void);
 
+  x starts on the left and increases to the right.
+  x goes from 0 to .width - 1
+
+  y starts at the top and increases downward.
+  y goes from 0 to .height - 1
+
+  strings are drawn with the stated position being the upper left corner.
+
 
  */
 
@@ -123,12 +131,15 @@ const byte CS    = 10 ;
 const byte DC    =  9 ;
 const byte RESET =  8 ;
 
-// NOTE:  R = 5 bits, G = 6 bits, B = 5 bits
+// NOTE:
+//        B = 5 bits (most significant)
+//        G = 6 bits (middle)
+//        R = 5 bits (least significant)
 
 const unsigned int BLACK = 0x0000 ;
-const unsigned int RED   = 0xF800 ;
+const unsigned int RED   = 0x001F ;
 const unsigned int GREEN = 0x07E0 ;
-const unsigned int BLUE  = 0x001F ;
+const unsigned int BLUE  = 0xF800 ;
 const unsigned int WHITE = 0xFFFF ;
 
 ST7735 lcd = ST7735(CS, DC, RESET);
@@ -138,29 +149,89 @@ ST7735 lcd = ST7735(CS, DC, RESET);
 void setup()
 {
 // Add your initialization code here
+	enum States {
+		red1, red2, red3,
+		green1, green2, green3,
+		blue1, blue2, blue3
+	} ;
+	States state = red1 ;
+	char strResult[17] ;
+	int offset = 0 ;
+	Serial.begin(115200) ;
+	Serial.println("Starting.") ;
 	unsigned int color = RED ;
 	lcd.initR() ;
-	delay(2000) ;
+	Serial.println("Initialized.") ;
+	Serial.print("width=") ;
+	Serial.print(lcd.width) ;
+	Serial.print("    height=") ;
+	Serial.println(lcd.height) ;
 	lcd.fillRect(0, 0, lcd.width, lcd.height, BLACK) ;
-	delay(2000) ;
-	for (unsigned int i=0; i<=lcd.height; i++) {
-		lcd.drawHorizontalLine(0, i, lcd.width, color) ;
-		switch (color) {
-		case RED:
-				color = GREEN ;
-				break ;
-		case GREEN:
-				color = BLUE ;
-				break ;
-		case BLUE:
-				color = RED ;
-				break ;
+	Serial.println("Cleared to black.") ;
+	Serial.println("Ready to draw horizontal lines.") ;
+	for (unsigned int i=1; i<=lcd.height; i++) {
+		const int size = 1 ; // size may be 1, 2, 3, 4, 5, 6, or 7.
+		                     // size of 1 is smallest, size of 7 is largest.
+		//
+		//  Clear space for new data.
+		//  Provides space for 3 digits.
+		//
+		lcd.fillRect(  10, 51, 18*size, 8*size, BLACK) ;
+		//
+		//  Write line number.
+		//
+		lcd.drawString(10, 51, itoa(i, strResult, 10), WHITE, size) ;
+		//
+		//  Draw the line.
+		//
+		lcd.drawHorizontalLine(offset, i-1, lcd.width-offset, color) ;
+//		delay(10) ;
+		if (i<lcd.width) {
+			offset++ ;
+		} else {
+			offset-- ;
+		}
+		//
+		//  Prepare for the next line.
+		//
+		switch (state) {
+		case red1:
+			state = red2 ;
+			break ;
+		case red2:
+			state = red3 ;
+			break ;
+		case red3:
+			state = green1 ;
+			color = GREEN ;
+			break ;
+		case green1:
+			state = green2 ;
+			break ;
+		case green2:
+			state = green3 ;
+			break ;
+		case green3:
+			state = blue1 ;
+			color = BLUE ;
+			break ;
+		case blue1:
+			state = blue2 ;
+			break ;
+		case blue2:
+			state = blue3 ;
+			break ;
+		case blue3:
+			state = red1 ;
+			color = RED ;
+			break ;
 			default:
+				state = red1 ;
 				color = RED ;
 				break ;
 		}
-		delay(100) ;
 	}
+	Serial.println("Finished drawing horizontal lines.") ;
 }
 
 // The loop function is called in an endless loop
