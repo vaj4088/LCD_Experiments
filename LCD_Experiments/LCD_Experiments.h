@@ -9,6 +9,7 @@
 #include "Arduino.h"
 //add your includes for the project LCD_Experiments here
 
+#include <ST7735.h>
 
 //end of add your includes here
 #ifdef __cplusplus
@@ -22,7 +23,7 @@ void setup();
 
 //add your function definitions for the project LCD_Experiments here
 
-
+void clearScreen(ST7735 obj) ;
 
 
 //Do not add code below this line
