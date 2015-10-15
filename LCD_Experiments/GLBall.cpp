@@ -33,8 +33,10 @@ boolean        GLBall::update() {
 		yPrevious = yCurrent ;
 		xCurrent += xVel ;
 		yCurrent += yVel ;
+		unsigned int xMax = lcd->width  - 1 ;
+		unsigned int yMax = lcd->height - 1 ;
 		if (xVel>0) {
-			if ((xCurrent+radius)>=lcd->width) {
+			if ((xCurrent+radius)>xMax) {
 				xVel = -xVel ;
 				xCurrent += xVel ;
 			}
@@ -45,7 +47,7 @@ boolean        GLBall::update() {
 			}
 		}
 		if (yVel>0) {
-			if ((yCurrent+radius)>=lcd->height) {
+			if ((yCurrent+radius)>yMax) {
 				yVel = -yVel ;
 				yCurrent += yVel ;
 			}
