@@ -130,18 +130,11 @@ const byte CS    = 10 ;
 const byte DC    =  9 ;
 const byte RESET =  8 ;
 
-// NOTE:
-//        B = 5 bits (most significant)
-//        G = 6 bits (middle)
-//        R = 5 bits (least significant)
-
-const unsigned int BLACK = 0x0000 ;
-const unsigned int RED   = 0x001F ;
-const unsigned int GREEN = 0x07E0 ;
-const unsigned int BLUE  = 0xF800 ;
-const unsigned int WHITE = 0xFFFF ;
-
 ST7735 lcd = ST7735(CS, DC, RESET);
+GLBall ball=GLBall(&lcd) ;
+
+const unsigned int cyclesToRepeat = 3927 ;
+unsigned int cyclesRemaining = cyclesToRepeat ;
 
 //
 //  This program displays a test pattern on the LCD screen,
@@ -149,32 +142,6 @@ ST7735 lcd = ST7735(CS, DC, RESET);
 //  then clears the screen and displays a "ball" that bounces around
 //  the LCD screen.  The ball leaves a trail as it goes.
 //
-
-//
-// Ball parameters
-//
-const unsigned long frameTime = 10 ;  //  The time from one animation frame
-                                      //  to the next in milliseconds.
-const int radius = 4 ;
-int xCurrent = radius ;
-int yCurrent = radius ;
-unsigned int ballColor = RED  ;
-unsigned int trailColor = BLUE ;
-int xPrevious ;
-int yPrevious ;
-//
-// Velocities are in pixels per frame.
-//
-int xVel = 1 ;
-int yVel = xVel ;
-unsigned long currentTime ;
-unsigned long previousTime ;
-//
-// Knowing when it is time to switch trail colors
-//
-boolean xSwitched ;
-boolean ySwitched ;
-
 
 //The setup function is called once at startup of the sketch
 void setup()
@@ -191,6 +158,7 @@ void setup()
 	unsigned int color = RED ;
 	lcd.initR() ;
 	clearScreen(lcd) ;  //  Clear screen.
+	Serial.begin(115200) ;
 	for (unsigned int i=1; i<=lcd.height; i++) {
 		const int size = 1 ; // size may be 1, 2, 3, 4, 5, 6, or 7.
 		                     // size of 1 is smallest, size of 7 is largest.
@@ -255,54 +223,34 @@ void setup()
 	}
 	delay(2000) ;
 	clearScreen(lcd) ;
-	lcd.fillCircle(xCurrent, yCurrent, radius, ballColor) ;
-	currentTime = millis() ;
-	previousTime = currentTime ;
+	//
+	// Set up ball parameters
+	//
+	ball.setBallColor(CYAN)
+	    .setTrailColor(YELLOW)
+	    .begin() ;
+//	Serial.print("Frame Time  = ") ; Serial.println(ball.getFrameTime()) ;
+//	Serial.print("Radius      = ") ; Serial.println(ball.getRadius()) ;
+//	Serial.print("XCurrent    = ") ; Serial.println(ball.getXCurrent()) ;
+//	Serial.print("Ycurrent    = ") ; Serial.println(ball.getYCurrent()) ;
+//	Serial.print("Ball  Color = ") ; Serial.println(ball.getBallColor(), 16) ;
+//	Serial.print("Trail Color = ") ; Serial.println(ball.getTrailColor(), 16) ;
+//	Serial.print("X Velocity  = ") ; Serial.println(ball.getXVel()) ;
+//	Serial.print("Y Velocity  = ") ; Serial.println(ball.getYVel()) ;
 }
 
 // The loop function is called in an endless loop
 void loop()
 {
 //Add your repeated code here
-	currentTime = millis() ;
-	if ( (currentTime - previousTime) >= frameTime) {
-		previousTime = currentTime ;
-		xPrevious = xCurrent ;
-		yPrevious = yCurrent ;
-		xCurrent += xVel ;
-		yCurrent += yVel ;
-		xSwitched = false ;
-		ySwitched = false ;
-		if (xVel>0) {
-			if ((xCurrent+radius)>=lcd.width) {
-				xVel = -xVel ;
-				xCurrent += xVel ;
-				xSwitched = true ;
-			}
-		} else if (xVel<0) {
-			if ((xCurrent-radius) <0) {
-				xVel = -xVel ;
-				xCurrent += xVel ;
-				xSwitched = true ;
-			}
-		}
-		if (yVel>0) {
-			if ((yCurrent+radius)>=lcd.height) {
-				yVel = -yVel ;
-				yCurrent += yVel ;
-				ySwitched = true ;
-			}
-		} else if (yVel<0) {
-			if ((yCurrent-radius) <0) {
-				yVel = -yVel ;
-				yCurrent += yVel ;
-				ySwitched = true ;
-			}
-		}
-		lcd.fillCircle(xPrevious, yPrevious, radius, trailColor) ;
-		lcd.fillCircle(xCurrent, yCurrent, radius, ballColor) ;
-		if (xSwitched && ySwitched) {
-			trailColor = ~trailColor ;
+	//
+	// Knowing when it is time to switch trail colors
+	//
+	if (ball.update()) {
+		cyclesRemaining-- ;
+		if (cyclesRemaining==0) {
+			ball.setTrailColor(~ball.getTrailColor());
+			cyclesRemaining=cyclesToRepeat ;
 		}
 	}
 }

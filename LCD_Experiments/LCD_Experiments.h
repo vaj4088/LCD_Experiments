@@ -9,7 +9,8 @@
 #include "Arduino.h"
 //add your includes for the project LCD_Experiments here
 
-#include <ST7735.h>
+//#include <ST7735.h>
+#include <GLBall.h>
 
 //end of add your includes here
 #ifdef __cplusplus
