@@ -133,8 +133,8 @@ const byte RESET =  8 ;
 ST7735 lcd = ST7735(CS, DC, RESET);
 GLBall ball=GLBall(&lcd) ;
 
-const unsigned int cyclesToRepeat = 3927 ;
-unsigned int cyclesRemaining = cyclesToRepeat ;
+const unsigned int xBouncesToRepeat = 33 ;
+unsigned int xBouncesRemaining = xBouncesToRepeat ;
 
 //
 //  This program displays a test pattern on the LCD screen,
@@ -229,14 +229,6 @@ void setup()
 	ball.setBallColor(CYAN)
 	    .setTrailColor(YELLOW)
 	    .begin() ;
-//	Serial.print("Frame Time  = ") ; Serial.println(ball.getFrameTime()) ;
-//	Serial.print("Radius      = ") ; Serial.println(ball.getRadius()) ;
-//	Serial.print("XCurrent    = ") ; Serial.println(ball.getXCurrent()) ;
-//	Serial.print("Ycurrent    = ") ; Serial.println(ball.getYCurrent()) ;
-//	Serial.print("Ball  Color = ") ; Serial.println(ball.getBallColor(), 16) ;
-//	Serial.print("Trail Color = ") ; Serial.println(ball.getTrailColor(), 16) ;
-//	Serial.print("X Velocity  = ") ; Serial.println(ball.getXVel()) ;
-//	Serial.print("Y Velocity  = ") ; Serial.println(ball.getYVel()) ;
 }
 
 // The loop function is called in an endless loop
@@ -246,11 +238,16 @@ void loop()
 	//
 	// Knowing when it is time to switch trail colors
 	//
+	int xVelPrevious = ball.getXVel() ;
 	if (ball.update()) {
-		cyclesRemaining-- ;
-		if (cyclesRemaining==0) {
-			ball.setTrailColor(~ball.getTrailColor());
-			cyclesRemaining=cyclesToRepeat ;
+		int xVelCurrent = ball.getXVel() ;
+		if (xVelCurrent == -xVelPrevious) {
+			xBouncesRemaining-- ;
+		}
+		if (xBouncesRemaining==0) {
+			ball.setTrailColor(~ball.getTrailColor()) ;
+			ball.setBallColor(~ball.getBallColor())   ;
+			xBouncesRemaining=xBouncesToRepeat ;
 		}
 	}
 }
