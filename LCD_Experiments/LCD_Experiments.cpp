@@ -131,7 +131,7 @@ const byte DC    =  9 ;
 const byte RESET =  8 ;
 
 ST7735 lcd = ST7735(CS, DC, RESET);
-GLBall ball=GLBall(&lcd) ;
+GLBall ball[] = {GLBall(&lcd), GLBall(&lcd), GLBall(&lcd)} ;
 
 const unsigned int xBouncesToRepeat = 33 ;
 unsigned int xBouncesRemaining = xBouncesToRepeat ;
@@ -221,33 +221,54 @@ void setup()
 				break ;
 		}
 	}
-	delay(2000) ;
+	delay(1000) ;
 	clearScreen(lcd) ;
 	//
 	// Set up ball parameters
 	//
-	ball.setBallColor(CYAN)
+	ball[0].setBallColor(YELLOW)
+			.setTrailColor(RED)
+			.setRadius(2)
+			.setXCurrent(50)
+			.setYCurrent(50)
+			 .setYVel(-ball[0].getYVel())
+			.begin() ;
+	ball[1].setBallColor(CYAN)
 	    .setTrailColor(YELLOW)
 	    .begin() ;
+	ball[2].setBallColor(PURPLE)
+			.setTrailColor(GREEN)
+			.setRadius(8)
+			.setXCurrent(50)
+			.setYCurrent(ball[2].getRadius())
+			.setXVel(-ball[2].getXVel())
+			.begin() ;
 }
 
 // The loop function is called in an endless loop
-void loop()
-{
+void loop() {
 //Add your repeated code here
 	//
 	// Knowing when it is time to switch trail colors
 	//
-	int xVelPrevious = ball.getXVel() ;
-	if (ball.update()) {
-		int xVelCurrent = ball.getXVel() ;
-		if (xVelCurrent == -xVelPrevious) {
-			xBouncesRemaining-- ;
-		}
-		if (xBouncesRemaining==0) {
-			ball.setTrailColor(~ball.getTrailColor()) ;
-			ball.setBallColor(~ball.getBallColor())   ;
-			xBouncesRemaining=xBouncesToRepeat ;
+	int xVelPrevious = ball[1].getXVel();
+	for (int i = 0; i <= 2; i++) {
+		if (i != 1) {
+			ball[i].update();
+		} else {
+			if (ball[i].update()) {
+				int xVelCurrent = ball[i].getXVel();
+				if (xVelCurrent == -xVelPrevious) {
+					xBouncesRemaining--;
+				}
+				if (xBouncesRemaining == 0) {
+					for (int j = 0; j <= 2; j++) {
+						ball[j].setTrailColor(~ball[j].getTrailColor());
+						ball[j].setBallColor(~ball[j].getBallColor());
+					}
+					xBouncesRemaining = xBouncesToRepeat;
+				}
+			}
 		}
 	}
 }
