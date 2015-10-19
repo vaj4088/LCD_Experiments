@@ -3,7 +3,7 @@
 
 /*
 
-SainSmart ST7735 LCD/microSD module
+SainSmart GL_ST7735 LCD/microSD module
 www.sainsmart.com
 
 
@@ -24,19 +24,19 @@ Signal Definition micro-SD):
 Methods that may be called:
 
 Create an instance:
-  ST7735(uint8_t CS, uint8_t RS, uint8_t SID,
+  GL_ST7735(uint8_t CS, uint8_t RS, uint8_t SID,
 	 uint8_t SCLK, uint8_t RST);
-  ST7735(uint8_t CS, uint8_t RS, uint8_t RST);
+  GL_ST7735(uint8_t CS, uint8_t RS, uint8_t RST);
 
   Description
 
-  The base class for drawing to the ST7735. Use this to create a named
-  instance of the ST7735 class to refer to in your sketch.
+  The base class for drawing to the GL_ST7735. Use this to create a named
+  instance of the GL_ST7735 class to refer to in your sketch.
 
   Syntax
 
-  ST7735(cs, dc, rst); for using hardware SPI
-  ST7735(cs, dc, mosi, sclk, rst); for use on any pins
+  GL_ST7735(cs, dc, rst); for using hardware SPI
+  GL_ST7735(cs, dc, mosi, sclk, rst); for use on any pins
 
   Parameters
 
@@ -67,7 +67,7 @@ Create an instance:
   #define DC    9
   #define RESET 8
 
-  ST7735 myScreen = ST7735(CS, DC, RESET);
+  GL_ST7735 myScreen = GL_ST7735(CS, DC, RESET);
 
 
 Initialize an ST7735B:
@@ -130,7 +130,7 @@ const byte CS    = 10 ;
 const byte DC    =  9 ;
 const byte RESET =  8 ;
 
-ST7735 lcd = ST7735(CS, DC, RESET);
+GL_ST7735 lcd = GL_ST7735(CS, DC, RESET);
 GLBall ball[] = {GLBall(&lcd), GLBall(&lcd), GLBall(&lcd)} ;
 
 const unsigned int xBouncesToRepeat = 33 ;
@@ -273,7 +273,7 @@ void loop() {
 	}
 }
 
-void clearScreen(ST7735 obj) {
+void clearScreen(GL_ST7735 obj) {
 	obj.fillRect(0, 0, lcd.width, lcd.height, BLACK); //  Clear screen.
 }
 

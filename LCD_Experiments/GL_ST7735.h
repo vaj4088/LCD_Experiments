@@ -58,11 +58,11 @@
 #define ST7735_GMCTRN1 0xE1
 
 
-class ST7735 {
+class GL_ST7735 {
  public:
-  ST7735(uint8_t CS, uint8_t RS, uint8_t SID, 
+  GL_ST7735(uint8_t CS, uint8_t RS, uint8_t SID, 
 	 uint8_t SCLK, uint8_t RST);
-  ST7735(uint8_t CS, uint8_t RS, uint8_t RST);
+  GL_ST7735(uint8_t CS, uint8_t RS, uint8_t RST);
   void initB(void);
   void initR(void);
 

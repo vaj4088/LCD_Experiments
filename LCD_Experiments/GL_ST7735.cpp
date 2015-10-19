@@ -1,14 +1,14 @@
 // Graphics library by ladyada/adafruit with init code from Rossum 
 // MIT license
 
-#include "ST7735.h"
+#include "GL_ST7735.h"
 #include "glcdfont.c"
 #include <avr/pgmspace.h>
 #include "pins_arduino.h"
 #include "wiring_private.h"
 #include "SPI.h"
 
-ST7735::ST7735(uint8_t cs, uint8_t rs, uint8_t sid, 
+GL_ST7735::GL_ST7735(uint8_t cs, uint8_t rs, uint8_t sid, 
   uint8_t sclk, uint8_t rst) {
   _cs = cs;
   _rs = rs;
@@ -17,7 +17,7 @@ ST7735::ST7735(uint8_t cs, uint8_t rs, uint8_t sid,
   _rst = rst;
 }
 
-ST7735::ST7735(uint8_t cs, uint8_t rs,  uint8_t rst) {
+GL_ST7735::GL_ST7735(uint8_t cs, uint8_t rs,  uint8_t rst) {
   _cs = cs;
   _rs = rs;
   _sid = 0;
@@ -26,7 +26,7 @@ ST7735::ST7735(uint8_t cs, uint8_t rs,  uint8_t rst) {
 }
 
 
-inline void ST7735::spiwrite(uint8_t c) {
+inline void GL_ST7735::spiwrite(uint8_t c) {
 
   //Serial.println(c, HEX);
 
@@ -62,7 +62,7 @@ inline void ST7735::spiwrite(uint8_t c) {
 }
 
 
-void ST7735::writecommand(uint8_t c) {
+void GL_ST7735::writecommand(uint8_t c) {
   *portOutputRegister(rsport) &= ~ rspin;
   //digitalWrite(_rs, LOW);
 
@@ -77,7 +77,7 @@ void ST7735::writecommand(uint8_t c) {
 }
 
 
-void ST7735::writedata(uint8_t c) {
+void GL_ST7735::writedata(uint8_t c) {
   *portOutputRegister(rsport) |= rspin;
   //digitalWrite(_rs, HIGH);
 
@@ -92,7 +92,7 @@ void ST7735::writedata(uint8_t c) {
 } 
 
 
-void ST7735::setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
+void GL_ST7735::setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 {
   writecommand(ST7735_CASET);  // column addr set
   writedata(0x00);
@@ -109,7 +109,7 @@ void ST7735::setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
   writecommand(ST7735_RAMWR);  // write to RAM
 }
 
-void ST7735::pushColor(uint16_t color) {
+void GL_ST7735::pushColor(uint16_t color) {
   *portOutputRegister(rsport) |= rspin;
   *portOutputRegister(csport) &= ~ cspin;
 
@@ -119,7 +119,7 @@ void ST7735::pushColor(uint16_t color) {
   *portOutputRegister(csport) |= cspin;
 }
 
-void ST7735::drawPixel(uint8_t x, uint8_t y,uint16_t color) {
+void GL_ST7735::drawPixel(uint8_t x, uint8_t y,uint16_t color) {
   if ((x >= width) || (y >= height)) return;
 
   setAddrWindow(x,y,x+1,y+1);
@@ -136,7 +136,7 @@ void ST7735::drawPixel(uint8_t x, uint8_t y,uint16_t color) {
 }
 
 
-void ST7735::fillScreen(uint16_t color) {
+void GL_ST7735::fillScreen(uint16_t color) {
   setAddrWindow(0, 0, width-1, height-1);
 
   // setup for data
@@ -153,7 +153,7 @@ void ST7735::fillScreen(uint16_t color) {
   *portOutputRegister(csport) |= cspin;
 }
 
-void ST7735::initB(void) {
+void GL_ST7735::initB(void) {
   // set pin directions
   pinMode(_rs, OUTPUT);
 
@@ -295,7 +295,7 @@ void ST7735::initB(void) {
 
 
 
-void ST7735::initR(void) {
+void GL_ST7735::initR(void) {
   // set pin directions
   pinMode(_rs, OUTPUT);
 
@@ -447,7 +447,7 @@ void ST7735::initR(void) {
 
 // draw a string from memory
 
-void ST7735::drawString(uint8_t x, uint8_t y, char *c, 
+void GL_ST7735::drawString(uint8_t x, uint8_t y, char *c, 
 			uint16_t color, uint8_t size) {
   while (c[0] != 0) {
     drawChar(x, y, c[0], color, size);
@@ -460,7 +460,7 @@ void ST7735::drawString(uint8_t x, uint8_t y, char *c,
   }
 }
 // draw a character
-void ST7735::drawChar(uint8_t x, uint8_t y, char c, 
+void GL_ST7735::drawChar(uint8_t x, uint8_t y, char c, 
 		      uint16_t color, uint8_t size) {
   for (uint8_t i =0; i<5; i++ ) {
     uint8_t line = pgm_read_byte(font+(c*5)+i);
@@ -478,7 +478,7 @@ void ST7735::drawChar(uint8_t x, uint8_t y, char c,
 }
 
 // fill a circle
-void ST7735::fillCircle(uint8_t x0, uint8_t y0, uint8_t r, uint16_t color) {
+void GL_ST7735::fillCircle(uint8_t x0, uint8_t y0, uint8_t r, uint16_t color) {
   int16_t f = 1 - r;
   int16_t ddF_x = 1;
   int16_t ddF_y = -2 * r;
@@ -505,7 +505,7 @@ void ST7735::fillCircle(uint8_t x0, uint8_t y0, uint8_t r, uint16_t color) {
 }
 
 // draw a circle outline
-void ST7735::drawCircle(uint8_t x0, uint8_t y0, uint8_t r, 
+void GL_ST7735::drawCircle(uint8_t x0, uint8_t y0, uint8_t r, 
 			uint16_t color) {
   int16_t f = 1 - r;
   int16_t ddF_x = 1;
@@ -541,18 +541,18 @@ void ST7735::drawCircle(uint8_t x0, uint8_t y0, uint8_t r,
   }
 }
 
-uint8_t ST7735::getRotation() {
+uint8_t GL_ST7735::getRotation() {
   return madctl;
 }
 
-void ST7735::setRotation(uint8_t m) {
+void GL_ST7735::setRotation(uint8_t m) {
   madctl = m;
   writecommand(ST7735_MADCTL);  // memory access control (directions)
   writedata(madctl);  // row address/col address, bottom to top refresh
 }
 
 // draw a rectangle
-void ST7735::drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, 
+void GL_ST7735::drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, 
 		      uint16_t color) {
   // smarter version
   drawHorizontalLine(x, y, w, color);
@@ -561,7 +561,7 @@ void ST7735::drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
   drawVerticalLine(x+w-1, y, h, color);
 }
 
-void ST7735::fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, 
+void GL_ST7735::fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, 
 		      uint16_t color) {
   // smarter version
 
@@ -580,7 +580,7 @@ void ST7735::fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
   digitalWrite(_cs, HIGH);
 }
 
-void ST7735::drawVerticalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t color)
+void GL_ST7735::drawVerticalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t color)
 {
   if (x >= width) return;
   if (y+length >= height) length = height-y-1;
@@ -588,7 +588,7 @@ void ST7735::drawVerticalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t col
   drawFastLine(x,y,length,color,1);
 }
 
-void ST7735::drawHorizontalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t color)
+void GL_ST7735::drawHorizontalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t color)
 {
   if (y >= height) return;
   if (x+length >= width) length = width-x-1;
@@ -596,7 +596,7 @@ void ST7735::drawHorizontalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t c
   drawFastLine(x,y,length,color,0);
 }
 
-void ST7735::drawFastLine(uint8_t x, uint8_t y, uint8_t length, 
+void GL_ST7735::drawFastLine(uint8_t x, uint8_t y, uint8_t length, 
 			  uint16_t color, uint8_t rotflag)
 {
   if (rotflag) {
@@ -617,7 +617,7 @@ void ST7735::drawFastLine(uint8_t x, uint8_t y, uint8_t length,
 
 
 // bresenham's algorithm - thx wikpedia
-void ST7735::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, 
+void GL_ST7735::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, 
 		      uint16_t color) {
   uint16_t steep = abs(y1 - y0) > abs(x1 - x0);
   if (steep) {
@@ -659,7 +659,7 @@ void ST7735::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
 
 //////////
 /*
-uint8_t ST7735::spiread(void) {
+uint8_t GL_ST7735::spiread(void) {
   uint8_t r = 0;
   if (_sid > 0) {
     r = shiftIn(_sid, _sclk, MSBFIRST);
@@ -680,7 +680,7 @@ uint8_t ST7735::spiread(void) {
 
 
 
-void ST7735::dummyclock(void) {
+void GL_ST7735::dummyclock(void) {
 
   if (_sid > 0) {
     digitalWrite(_sclk, LOW);
@@ -690,7 +690,7 @@ void ST7735::dummyclock(void) {
     //SCLK_PORT |= _BV(SCLK);
   }
 }
-uint8_t ST7735::readdata(void) {
+uint8_t GL_ST7735::readdata(void) {
   *portOutputRegister(rsport) |= rspin;
 
   *portOutputRegister(csport) &= ~ cspin;
@@ -703,7 +703,7 @@ uint8_t ST7735::readdata(void) {
 
 } 
 
-uint8_t ST7735::readcommand8(uint8_t c) {
+uint8_t GL_ST7735::readcommand8(uint8_t c) {
   digitalWrite(_rs, LOW);
 
   *portOutputRegister(csport) &= ~ cspin;
@@ -725,7 +725,7 @@ uint8_t ST7735::readcommand8(uint8_t c) {
 }
 
 
-uint16_t ST7735::readcommand16(uint8_t c) {
+uint16_t GL_ST7735::readcommand16(uint8_t c) {
   digitalWrite(_rs, LOW);
   if (_cs)
     digitalWrite(_cs, LOW);
@@ -742,7 +742,7 @@ uint16_t ST7735::readcommand16(uint8_t c) {
   return r;
 }
 
-uint32_t ST7735::readcommand32(uint8_t c) {
+uint32_t GL_ST7735::readcommand32(uint8_t c) {
   digitalWrite(_rs, LOW);
   if (_cs)
     digitalWrite(_cs, LOW);

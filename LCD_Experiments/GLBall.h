@@ -34,7 +34,7 @@ const unsigned int CYAN  = ~RED   ;
 
 class GLBall {
 public:
-	GLBall(ST7735 *st7735) ;
+	GLBall(GL_ST7735 *st7735) ;
 	unsigned int  getBallColor()  const;
 	unsigned long getFrameTime()  const;
 	unsigned int  getRadius()     const;
@@ -77,7 +77,7 @@ private:
 	int yVel ;
 	unsigned long currentTime ;
 	unsigned long previousTime ;
-	ST7735 *lcd ;
+	GL_ST7735 *lcd ;
 };
 
 #endif /* GLBALL_H_ */

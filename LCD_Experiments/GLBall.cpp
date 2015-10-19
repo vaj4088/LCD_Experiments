@@ -7,7 +7,7 @@
 
 #include "GLBall.h"
 
-GLBall::GLBall(ST7735 *st7735)
+GLBall::GLBall(GL_ST7735 *st7735)
 	: frameTime (10)
 	, radius (4)
 	, xCurrent (radius)
