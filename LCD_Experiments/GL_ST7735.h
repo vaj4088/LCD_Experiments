@@ -57,6 +57,17 @@
 #define ST7735_GMCTRP1 0xE0
 #define ST7735_GMCTRN1 0xE1
 
+//
+// Set DEBUG to 1 to debug drawing of conic sections.
+//
+#define DEBUG 0
+//
+// if DEBUG is set to a non-zero value, then the SPEED must
+// be set to a bit rate appropriate for the Serial port.
+//
+#define SPEED 115200
+
+
 
 class GL_ST7735 {
  public:
@@ -101,6 +112,24 @@ class GL_ST7735 {
   void dummyclock(void);
   void writecommand(uint8_t);
   void writedata(uint8_t);
+  //
+  // For ellipses and other conic sections.
+  //
+  // (xs, ys) is the starting point - must be exactly ON the conic section.
+  // (xe, ye) is the   ending point - must be exactly ON the conic section.
+  //
+  // NOTE: drawConic changes A, B, C, D, E, and F !!!
+  //
+  void drawConic(int xs, int ys, int xe, int ye, int color) ;
+  void assign(int A_, int B_, int C_, int D_, int E_, int F_) ;
+  void assignf(double scale,
+                             double A_,
+                             double B_,
+                             double C_,
+                             double D_,
+                             double E_,
+                             double F_) ;
+
   /*
   // these are not for use, 8-bit protocol only!
   uint8_t readdata(void);
@@ -118,4 +147,27 @@ class GL_ST7735 {
   uint8_t cspin, rspin, sidpin, sclkpin;
 
   uint8_t madctl;
+  //
+  // Parameters for ellipses and other conic sections.
+  //
+  // A xx + B xy + C yy + D x + E y + F = 0
+
+  int A;
+  int B;
+  int C;
+  int D;
+  int E;
+  int F;
+
+//  const static int DIAGx[] ;
+//  const static int DIAGy[] ;
+//  const static int SIDEx[] ;
+//  const static int SIDEy[] ;
+
+  //
+  // Private methods for ellipses and other conic sections.
+  inline int rnd(double x) ;
+  inline int odd(int n) ;
+  int getOctant(int gx, int gy) ;
+
 };

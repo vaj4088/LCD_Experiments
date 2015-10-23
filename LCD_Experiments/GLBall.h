@@ -15,21 +15,21 @@
 #include <WProgram.h>
 #endif
 
-#include <ST7735.h>
+#include <GL_ST7735.h>
 
 // NOTE:
 //        B = 5 bits (most significant)
 //        G = 6 bits (middle)
 //        R = 5 bits (least significant)
 
-const unsigned int BLACK = 0x0000 ;
-const unsigned int RED   = 0x001F ;
-const unsigned int GREEN = 0x07E0 ;
-const unsigned int BLUE  = 0xF800 ;
-const unsigned int WHITE = ~BLACK ;
-const unsigned int PURPLE= ~GREEN ;
-const unsigned int YELLOW= ~BLUE  ;
-const unsigned int CYAN  = ~RED   ;
+const unsigned int BLACK  = 0x0000 ;
+const unsigned int RED    = 0x001F ;
+const unsigned int GREEN  = 0x07E0 ;
+const unsigned int BLUE   = 0xF800 ;
+const unsigned int WHITE  = ~BLACK ;
+const unsigned int MAGENTA= ~GREEN ;
+const unsigned int YELLOW = ~BLUE  ;
+const unsigned int CYAN   = ~RED   ;
 
 
 class GLBall {
@@ -78,6 +78,7 @@ private:
 	unsigned long currentTime ;
 	unsigned long previousTime ;
 	GL_ST7735 *lcd ;
+
 };
 
 #endif /* GLBALL_H_ */

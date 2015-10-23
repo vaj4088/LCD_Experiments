@@ -236,7 +236,7 @@ void setup()
 	ball[1].setBallColor(CYAN)
 	    .setTrailColor(YELLOW)
 	    .begin() ;
-	ball[2].setBallColor(PURPLE)
+	ball[2].setBallColor(MAGENTA)
 			.setTrailColor(GREEN)
 			.setRadius(8)
 			.setXCurrent(50)
