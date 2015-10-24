@@ -661,7 +661,7 @@ void GL_ST7735::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
   }
 }
 
-void GL_ST7735::assign(int A_, int B_, int C_, int D_, int E_, int F_) {
+void GL_ST7735::assign(long A_, long B_, long C_, long D_, long E_, long F_) {
   A = A_;
   B = B_;
   C = C_;
@@ -685,8 +685,8 @@ void GL_ST7735::assignf(double scale,
   F = rnd(F_ * scale);
 }
 
-inline int GL_ST7735::rnd(double x) {
-	return (x>=0.0)?(int)(x + 0.5):(int)(x - 0.5);
+inline long GL_ST7735::rnd(double x) {
+	return (x>=0.0)?(long)(x + 0.5):(long)(x - 0.5);
 }
 
 /*
@@ -747,7 +747,13 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
 	//
 	//  Save parameters before modification.
 	//
-	int A9 = A ; int B9 = B; int C9 = C ; int D9 = D; int E9 = E; int F9 = F;
+	long A9 = A ;
+	long B9 = B;
+	long C9 = C ;
+	long D9 = D;
+	long E9 = E;
+	long F9 = F;
+
   A *= 4;
   B *= 4;
   C *= 4;
@@ -757,7 +763,7 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
 
 #if (DEBUG)
   {
-  const char *fmt = "GL_ST7735::drawConic -- %d %d %d %d %d %d\n" ;
+  const char *fmt = "GL_ST7735::drawConic -- %dl %dl %dl %dl %dl %dl\n" ;
   char buf[snprintf(NULL, 0, fmt, A,B,C,D,E,F) + 1] ;
 //
 //  note +1 for terminating null byte
@@ -780,7 +786,7 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
   int dxD = DIAGx[octant];
   int dyD = DIAGy[octant];
 
-  int d,u,v;
+  long d,u,v;
 	switch (octant) {
 	case 1:
 		d = A + B / 2 + C / 4 + D + E / 2 + F;
@@ -834,42 +840,42 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
 		break; //  Makes compiler happier.
 	}
 
-  int k1sign = dyS*dyD;
-  int k1 = 2 * (A + k1sign * (C - A));
-  int Bsign = dxD*dyD;
-  int k2 = k1 + Bsign * B;
-  int k3 = 2 * (A + C + Bsign * B);
+  long k1sign = dyS*dyD;
+  long k1 = 2 * (A + k1sign * (C - A));
+  long Bsign = dxD*dyD;
+  long k2 = k1 + Bsign * B;
+  long k3 = 2 * (A + C + Bsign * B);
 
   // Work out gradient at endpoint
-  int gxe = xe - xs;
-  int gye = ye - ys;
-  int gx = 2*A*gxe +   B*gye + D;
-  int gy =   B*gxe + 2*C*gye + E;
+  long gxe = xe - xs;
+  long gye = ye - ys;
+  long gx = 2*A*gxe +   B*gye + D;
+  long gy =   B*gxe + 2*C*gye + E;
 
-  int octantcount = getOctant(gx,gy) - octant;
-  if (octantcount < 0)
-    octantcount = octantcount + 8;
-  else if (octantcount==0)
+  int octantCount = getOctant(gx,gy) - octant;
+  if (octantCount < 0)
+    octantCount = octantCount + 8;
+  else if (octantCount==0)
     if((xs>xe && dxD>0) || (ys>ye && dyD>0) ||
        (xs<xe && dxD<0) || (ys<ye && dyD<0))
-      octantcount +=8;
+      octantCount +=8;
 
 #if (DEBUG)
   {
-  const char *fmt = "octantcount = %d\n" ;
-  char buf[snprintf(NULL, 0, fmt, octantcount) + 1] ;
+  const char *fmt = "octantCount = %d\n" ;
+  char buf[snprintf(NULL, 0, fmt, octantCount) + 1] ;
 //
 //  note +1 for terminating null byte
 //
-  snprintf(buf, sizeof buf, fmt, octantcount) ;
+  snprintf(buf, sizeof buf, fmt, octantCount) ;
   Serial.print(buf) ;
   }
 #endif
 
-  int x = xs;
-  int y = ys;
+  long x = xs;
+  long y = ys;
 
-  while (octantcount > 0) {
+  while (octantCount > 0) {
 	#if (DEBUG)
 	  {
 	  const char *fmt = "-- %d -------------------------\n" ;
@@ -891,7 +897,7 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
 
 		#if (DEBUG)
 		  {
-		  const char *fmt = "x = %3d y = %3d d = %4d\n" ;
+		  const char *fmt = "x = %dl y = %dl d = %dl\n" ;
 		  char buf[snprintf(NULL, 0, fmt, x,y,d) + 1] ;
 		//
 		//  note +1 for terminating null byte
@@ -923,7 +929,7 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
       v = v - k2 + k3/2;
       k1 = k1 - 2*k2 + k3;
       k2 = k3 - k2;
-      int tmp = dxS; dxS = -dyS; dyS = tmp;
+      long tmp = dxS; dxS = -dyS; dyS = tmp;
     }
     else {                              // Octant is even
       while (2*u < k2) {
@@ -932,7 +938,7 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
 
 		#if (DEBUG)
 		  {
-		  const char *fmt = "x = %3d y = %3d d = %4d\n" ;
+		  const char *fmt = "x = %dl y = %dl d = %dl\n" ;
 		  char buf[snprintf(NULL, 0, fmt, x,y,d) + 1] ;
 		//
 		//  note +1 for terminating null byte
@@ -958,18 +964,18 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
           d = d + v;
         }
       }
-      int tmpdk = k1 - k2;
+      long tmpdk = k1 - k2;
       d = d + u - v + tmpdk;
       v = 2*u - v + tmpdk;
       u = u + tmpdk;
       k3 = k3 + 4*tmpdk;
       k2 = k1 + tmpdk;
 
-      int tmp = dxD; dxD = -dyD; dyD = tmp;
+      long tmp = dxD; dxD = -dyD; dyD = tmp;
     }
 
     octant = (octant&7)+1;
-    octantcount--;
+    octantCount--;
   }
 
   // Draw final octant until we reach the endpoint
@@ -995,7 +1001,7 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
 
 		#if (DEBUG)
 		  {
-		  const char *fmt = "x = %3d y = %3d d = %4d\n" ;
+		  const char *fmt = "x = %dl y = %dl d = %dl\n" ;
 		  char buf[snprintf(NULL, 0, fmt, x,y,d) + 1] ;
 		//
 		//  note +1 for terminating null byte
@@ -1031,7 +1037,7 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
 
 		#if (DEBUG)
 		  {
-		  const char *fmt = "x = %3d y = %3d d = %4d\n" ;
+		  const char *fmt = "x = %dl y = %dl d = %dl\n" ;
 		  char buf[snprintf(NULL, 0, fmt, x,y,d) + 1] ;
 		//
 		//  note +1 for terminating null byte
@@ -1070,7 +1076,7 @@ inline int GL_ST7735::odd(int n)
 }
 
 
-int GL_ST7735::getOctant(int gx, int gy)
+int GL_ST7735::getOctant(long gx, long gy)
 {
   // Use gradient to identify octant.
   int upper = abs(gx)>abs(gy);

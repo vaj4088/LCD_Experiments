@@ -121,7 +121,7 @@ class GL_ST7735 {
   // NOTE: drawConic changes A, B, C, D, E, and F !!!
   //
   void drawConic(int xs, int ys, int xe, int ye, int color) ;
-  void assign(int A_, int B_, int C_, int D_, int E_, int F_) ;
+  void assign(long A_, long B_, long C_, long D_, long E_, long F_) ;
   void assignf(double scale,
                              double A_,
                              double B_,
@@ -166,8 +166,8 @@ class GL_ST7735 {
 
   //
   // Private methods for ellipses and other conic sections.
-  inline int rnd(double x) ;
+  inline long rnd(double x) ;
   inline int odd(int n) ;
-  int getOctant(int gx, int gy) ;
+  int getOctant(long gx, long gy) ;
 
 };
