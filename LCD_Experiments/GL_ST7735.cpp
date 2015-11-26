@@ -125,7 +125,8 @@ void GL_ST7735::pushColor(uint16_t color) {
 }
 
 void GL_ST7735::drawPixel(uint8_t x, uint8_t y,uint16_t color) {
-  if ((x >= width) || (y >= height)) return;
+  if ((x >= width) || (y >= height)) return ;
+  if ((x <= 0)     || (y <= 0)     ) return ;
 
   setAddrWindow(x,y,x+1,y+1);
 
@@ -452,7 +453,7 @@ void GL_ST7735::initR(void) {
 
 // draw a string from memory
 
-void GL_ST7735::drawString(uint8_t x, uint8_t y, char *c, 
+void GL_ST7735::drawString(uint8_t x, uint8_t y, char const *c,
 			uint16_t color, uint8_t size) {
   while (c[0] != 0) {
     drawChar(x, y, c[0], color, size);
@@ -685,6 +686,14 @@ void GL_ST7735::assignf(double scale,
   F = rnd(F_ * scale);
 }
 
+long GL_ST7735::getA() { return A ;}
+long GL_ST7735::getB() { return B ;}
+long GL_ST7735::getC() { return C ;}
+long GL_ST7735::getD() { return D ;}
+long GL_ST7735::getE() { return E ;}
+long GL_ST7735::getF() { return F ;}
+
+
 inline long GL_ST7735::rnd(double x) {
 	return (x>=0.0)?(long)(x + 0.5):(long)(x - 0.5);
 }
@@ -742,17 +751,32 @@ inline long GL_ST7735::rnd(double x) {
 // under "General ellipse".
 //
 
-void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
+void GL_ST7735::drawConicHelper(int xs, int ys, int xe, int ye, int color)
 {
-	//
-	//  Save parameters before modification.
-	//
-	long A9 = A ;
-	long B9 = B;
-	long C9 = C ;
-	long D9 = D;
-	long E9 = E;
-	long F9 = F;
+#if (DEBUG)
+  {
+  const char *fmt =
+		  "GL_ST7735::drawConicHelper called with %7d %7d %7d %7d %7d" ;
+  char buf[snprintf(NULL, 0, fmt, xs, ys, xe, ye, color) + 1] ;
+//
+//  note +1 for terminating null byte
+//
+  snprintf(buf, sizeof buf, fmt, xs, ys, xe, ye, color) ;
+  Serial.println(buf) ;
+  }
+#endif
+#if (DEBUG)
+  {
+  const char *fmt =
+		  "GL_ST7735::drawConicHelper -1- %12ld %12ld %12ld %12ld %12ld %12ld" ;
+  char buf[snprintf(NULL, 0, fmt, A,B,C,D,E,F) + 1] ;
+//
+//  note +1 for terminating null byte
+//
+  snprintf(buf, sizeof buf, fmt, A,B,C,D,E,F) ;
+  Serial.println(buf) ;
+  }
+#endif
 
   A *= 4;
   B *= 4;
@@ -763,13 +787,14 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
 
 #if (DEBUG)
   {
-  const char *fmt = "GL_ST7735::drawConic -- %dl %dl %dl %dl %dl %dl\n" ;
+  const char *fmt =
+		  "GL_ST7735::drawConicHelper -2- %12ld %12ld %12ld %12ld %12ld %12ld" ;
   char buf[snprintf(NULL, 0, fmt, A,B,C,D,E,F) + 1] ;
 //
 //  note +1 for terminating null byte
 //
   snprintf(buf, sizeof buf, fmt, A,B,C,D,E,F) ;
-  Serial.print(buf) ;
+  Serial.println(buf) ;
   }
 #endif
 
@@ -787,58 +812,128 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
   int dyD = DIAGy[octant];
 
   long d,u,v;
-	switch (octant) {
-	case 1:
+
+#if (DEBUG)
+  {
+  const char *fmt = "Before switch, octant = %d" ;
+  char buf[snprintf(NULL, 0, fmt, octant) + 1] ;
+//
+//  note +1 for terminating null byte
+//
+  snprintf(buf, sizeof buf, fmt, octant) ;
+  Serial.println(buf) ;
+  }
+#endif
+
+	if (octant == 1) {
 		d = A + B / 2 + C / 4 + D + E / 2 + F;
 		u = A + B / 2 + D;
 		v = u + E;
-		break;
-	case 2:
+	} else if (octant == 2) {
 		d = A / 4 + B / 2 + C + D / 2 + E + F;
 		u = B / 2 + C + E;
 		v = u + D;
-		break;
-	case 3:
+	} else if (octant == 3) {
 		d = A / 4 - B / 2 + C - D / 2 + E + F;
 		u = -B / 2 + C + E;
 		v = u - D;
-		break;
-	case 4:
+	} else if (octant == 4) {
 		d = A - B / 2 + C / 4 - D + E / 2 + F;
 		u = A - B / 2 - D;
 		v = u + E;
-		break;
-	case 5:
+	} else if (octant == 5) {
 		d = A + B / 2 + C / 4 - D - E / 2 + F;
 		u = A + B / 2 - D;
 		v = u - E;
-		break;
-	case 6:
+	} else if (octant == 6) {
 		d = A / 4 + B / 2 + C - D / 2 - E + F;
 		u = B / 2 + C - E;
 		v = u - D;
-		break;
-	case 7:
+	} else if (octant == 7) {
 		d = A / 4 - B / 2 + C + D / 2 - E + F;
 		u = -B / 2 + C - E;
 		v = u + D;
-		break;
-	case 8:
+	} else if (octant == 8) {
 		d = A - B / 2 + C / 4 + D - E / 2 + F;
 		u = A - B / 2 + D;
 		v = u - E;
-		break;
-	default:
-		const char *fmt = "FUNNY OCTANT\n";
+	} else {
+		d=0 ; u=0 ; v=0 ;
+		const char *fmt = "FUNNY OCTANT";
 		char buf[snprintf(NULL, 0, fmt) + 1];
 		//
 		//  note +1 for terminating null byte
 		//
 		snprintf(buf, sizeof buf, fmt);
-		Serial.print(buf);
-		abort();
-		break; //  Makes compiler happier.
+		Serial.println(buf);
+		while (true) {} ;
 	}
+
+//	switch (octant) {
+//	case 1:
+//		d = A + B / 2 + C / 4 + D + E / 2 + F;
+//		u = A + B / 2 + D;
+//		v = u + E;
+//		break;
+//	case 2:
+//		d = A / 4 + B / 2 + C + D / 2 + E + F;
+//		u = B / 2 + C + E;
+//		v = u + D;
+//		break;
+//	case 3:
+//		d = A / 4 - B / 2 + C - D / 2 + E + F;
+//		u = -B / 2 + C + E;
+//		v = u - D;
+//		break;
+//	case 4:
+//		d = A - B / 2 + C / 4 - D + E / 2 + F;
+//		u = A - B / 2 - D;
+//		v = u + E;
+//		break;
+//	case 5:
+//		d = A + B / 2 + C / 4 - D - E / 2 + F;
+//		u = A + B / 2 - D;
+//		v = u - E;
+//		break;
+//	case 6:
+//		d = A / 4 + B / 2 + C - D / 2 - E + F;
+//		u = B / 2 + C - E;
+//		v = u - D;
+//		break;
+//	case 7:
+//		d = A / 4 - B / 2 + C + D / 2 - E + F;
+//		u = -B / 2 + C - E;
+//		v = u + D;
+//		break;
+//	case 8:
+//		d = A - B / 2 + C / 4 + D - E / 2 + F;
+//		u = A - B / 2 + D;
+//		v = u - E;
+//		break;
+//	default:
+//		d=0 ; u=0 ; v=0 ;
+//		const char *fmt = "FUNNY OCTANT";
+//		char buf[snprintf(NULL, 0, fmt) + 1];
+//		//
+//		//  note +1 for terminating null byte
+//		//
+//		snprintf(buf, sizeof buf, fmt);
+//		Serial.println(buf);
+//		while (true) {} ;
+//		break ;
+//	}
+
+#if (DEBUG)
+  {
+  const char *fmt = "After  switch, octant = %d" ;
+  char buf[snprintf(NULL, 0, fmt, octant) + 1] ;
+//
+//  note +1 for terminating null byte
+//
+  snprintf(buf, sizeof buf, fmt, octant) ;
+  Serial.println(buf) ;
+  }
+#endif
 
   long k1sign = dyS*dyD;
   long k1 = 2 * (A + k1sign * (C - A));
@@ -897,7 +992,7 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
 
 		#if (DEBUG)
 		  {
-		  const char *fmt = "x = %dl y = %dl d = %dl\n" ;
+		  const char *fmt = "x = %ld y = %ld d = %ld\n" ;
 		  char buf[snprintf(NULL, 0, fmt, x,y,d) + 1] ;
 		//
 		//  note +1 for terminating null byte
@@ -929,7 +1024,7 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
       v = v - k2 + k3/2;
       k1 = k1 - 2*k2 + k3;
       k2 = k3 - k2;
-      long tmp = dxS; dxS = -dyS; dyS = tmp;
+      int tmp = dxS; dxS = -dyS; dyS = tmp;
     }
     else {                              // Octant is even
       while (2*u < k2) {
@@ -938,7 +1033,7 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
 
 		#if (DEBUG)
 		  {
-		  const char *fmt = "x = %dl y = %dl d = %dl\n" ;
+		  const char *fmt = "x = %ld y = %ld d = %ld\n" ;
 		  char buf[snprintf(NULL, 0, fmt, x,y,d) + 1] ;
 		//
 		//  note +1 for terminating null byte
@@ -971,7 +1066,7 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
       k3 = k3 + 4*tmpdk;
       k2 = k1 + tmpdk;
 
-      long tmp = dxD; dxD = -dyD; dyD = tmp;
+      int tmp = dxD; dxD = -dyD; dyD = tmp;
     }
 
     octant = (octant&7)+1;
@@ -1001,7 +1096,7 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
 
 		#if (DEBUG)
 		  {
-		  const char *fmt = "x = %dl y = %dl d = %dl\n" ;
+		  const char *fmt = "x = %ld y = %ld d = %ld\n" ;
 		  char buf[snprintf(NULL, 0, fmt, x,y,d) + 1] ;
 		//
 		//  note +1 for terminating null byte
@@ -1037,7 +1132,7 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
 
 		#if (DEBUG)
 		  {
-		  const char *fmt = "x = %dl y = %dl d = %dl\n" ;
+		  const char *fmt = "x = %ld y = %ld d = %ld\n" ;
 		  char buf[snprintf(NULL, 0, fmt, x,y,d) + 1] ;
 		//
 		//  note +1 for terminating null byte
@@ -1064,10 +1159,102 @@ void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
       }
     }
   }
+}
+
+
+
+void GL_ST7735::drawConic(int xs, int ys, int xe, int ye, int color)
+{
+	//
+	//  Save parameters before modification.
+	//
+	long A9 = A ;
+	long B9 = B ;
+	long C9 = C ;
+	long D9 = D ;
+	long E9 = E ;
+	long F9 = F ;
+
+	drawConicHelper(xs, ys, xe, ye, color) ;
+
   //
   // Restore parameters.
   //
 	A = A9 ; B = B9 ; C = C9 ; D = D9 ; E = E9 ; F = F9 ;
+}
+
+void GL_ST7735::drawEllipse(int xc,
+		int yc,
+		int semiMajor,
+		int semiMinor,
+		int theta,
+		int color) {
+	/*
+	 * A = a^2 (sin(Theta))^2 + b^2 (cos(Theta))^2
+     * B = 2 (b^2-a^2) sin(Theta) cos(Theta)
+     * C = a^2 (cos(Theta))^2 + b^2 (sin(Theta))^2
+     * D = -2 A x_c - B y_c
+     * E = -B x_c - 2 C y_c
+     * F = A (x_c)^2 + B x_c y_c + C (y_c)^2 - a^2 b^2
+     *
+     * x_can = (x-x_c) cos(Theta) + (y-y_c) sin(Theta)
+     *
+     * x_can = x canonical
+     *
+	 */
+	double twoPi = 8.0 * atan(1.0) ;
+	double sinTheta = sin((twoPi * theta) / 360.0) ;
+	double cosTheta = cos((twoPi * theta) / 360.0) ;
+	double sinThetaSquared = sinTheta * sinTheta ;
+	double cosThetaSquared = cosTheta * cosTheta ;
+	double aSquared = (double)semiMajor * (double)semiMajor ;
+	double bSquared = (double)semiMinor * (double)semiMinor ;
+	double A = aSquared * sinThetaSquared + bSquared * cosThetaSquared ;
+	double B = (double)2.0 * sinTheta * cosTheta * (bSquared - aSquared) ;
+	double C = aSquared * cosThetaSquared + bSquared * sinThetaSquared ;
+	double D = (double)(-2.0) * A * xc - B * yc ;
+	double E = (double)(-2.0) * C * yc - B * xc ;
+	double F = A * xc * xc + B * xc * yc + C * yc * yc - aSquared * bSquared ;
+	assignf(1.0, A, B, C, D, E, F) ;
+	double xStart = (double)xc + (double)semiMajor * cosTheta ;
+	double yStart = (double)yc + (double)semiMajor * sinTheta ;
+	double xEnd   = (double)xc - (double)semiMajor * cosTheta ;
+	double yEnd   = (double)yc - (double)semiMajor * sinTheta ;
+
+//	long A9 = A ;
+//	long B9 = B ;
+//	long C9 = C ;
+//	long D9 = D ;
+//	long E9 = E ;
+//	long F9 = F ;
+	assign(A, B, C, D, E, F) ;
+
+	drawConicHelper(
+			(int)rnd(xStart),
+			(int)rnd(yStart),
+			(int)rnd(xEnd),
+			(int)rnd(yEnd),
+			color) ;
+
+	//
+	// Reset parameters.
+	//
+	assign(A, B, C, D, E, F) ;
+
+	//
+	// Notice that Start and End have been reversed in the following call:
+	//
+	drawConicHelper(
+			(int)rnd(xEnd),
+			(int)rnd(yEnd),
+			(int)rnd(xStart),
+			(int)rnd(yStart),
+			color) ;
+
+	//
+	// Restore parameters.
+	//
+	assign(A, B, C, D, E, F) ;
 }
 
 inline int GL_ST7735::odd(int n)

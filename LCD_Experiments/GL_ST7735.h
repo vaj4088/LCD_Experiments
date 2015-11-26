@@ -60,7 +60,7 @@
 //
 // Set DEBUG to 1 to debug drawing of conic sections.
 //
-#define DEBUG 0
+#define DEBUG 1
 //
 // if DEBUG is set to a non-zero value, then the SPEED must
 // be set to a bit rate appropriate for the Serial port.
@@ -97,7 +97,7 @@ class GL_ST7735 {
   void fillCircle(uint8_t x0, uint8_t y0, uint8_t r, 
 		  uint16_t color);
 
-  void drawString(uint8_t x, uint8_t y, char *c, 
+  void drawString(uint8_t x, uint8_t y, char const *c,
 		  uint16_t color, uint8_t size=1);
   void drawChar(uint8_t x, uint8_t y, char c, 
 		      uint16_t color, uint8_t size=1);
@@ -118,8 +118,7 @@ class GL_ST7735 {
   // (xs, ys) is the starting point - must be exactly ON the conic section.
   // (xe, ye) is the   ending point - must be exactly ON the conic section.
   //
-  // NOTE: drawConic changes A, B, C, D, E, and F !!!
-  //
+  void drawConicHelper(int xs, int ys, int xe, int ye, int color) ;
   void drawConic(int xs, int ys, int xe, int ye, int color) ;
   void assign(long A_, long B_, long C_, long D_, long E_, long F_) ;
   void assignf(double scale,
@@ -129,6 +128,21 @@ class GL_ST7735 {
                              double D_,
                              double E_,
                              double F_) ;
+
+  long getA() ;
+  long getB() ;
+  long getC() ;
+  long getD() ;
+  long getE() ;
+  long getF() ;
+
+  void drawEllipse(int xc,
+  		int yc,
+  		int semiMajor,
+  		int semiMinor,
+  		int theta,
+  		int color) ;
+
 
   /*
   // these are not for use, 8-bit protocol only!
@@ -152,12 +166,12 @@ class GL_ST7735 {
   //
   // A xx + B xy + C yy + D x + E y + F = 0
 
-  int A;
-  int B;
-  int C;
-  int D;
-  int E;
-  int F;
+  long A;
+  long B;
+  long C;
+  long D;
+  long E;
+  long F;
 
 //  const static int DIAGx[] ;
 //  const static int DIAGy[] ;

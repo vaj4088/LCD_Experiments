@@ -142,11 +142,8 @@ unsigned int xBouncesRemaining = xBouncesToRepeat ;
 //  then clears the screen and displays a "ball" that bounces around
 //  the LCD screen.  The ball leaves a trail as it goes.
 //
-
-//The setup function is called once at startup of the sketch
 void setup()
 {
-// Add your initialization code here
 	enum States {
 		red1, red2, red3,
 		green1, green2, green3,
@@ -159,6 +156,9 @@ void setup()
 	lcd.initR() ;
 	clearScreen(lcd) ;  //  Clear screen.
 	Serial.begin(115200) ;
+	//
+	// Draw test pattern including string for line number.
+	//
 	for (unsigned int i=1; i<=lcd.height; i++) {
 		const int size = 1 ; // size may be 1, 2, 3, 4, 5, 6, or 7.
 		                     // size of 1 is smallest, size of 7 is largest.
@@ -224,30 +224,72 @@ void setup()
 	delay(1000) ;
 	clearScreen(lcd) ;
 	//
+	// Draw  ellipses.
+	//
+	// This ellipse is centered at (60,80),
+	// has major semi-axis of 50,
+	// has minor semi-axis that varies,
+	// and has a rotation angle of 20 degrees.
+	//
+
+	lcd.drawEllipse(60, 80, 50, 10,  90, WHITE  ) ;
+	lcd.drawEllipse(60, 80, 50, 10,  80, MAGENTA) ;
+	lcd.drawEllipse(60, 80, 50, 10,  70, YELLOW ) ;
+	lcd.drawEllipse(60, 80, 50, 10,  60, CYAN   ) ;
+	lcd.drawEllipse(60, 80, 50, 10,  50, RED    ) ;
+	lcd.drawEllipse(60, 80, 50, 10,  40, GREEN  ) ;
+	lcd.drawEllipse(60, 80, 50, 10,  30, BLUE   ) ;
+	lcd.drawEllipse(60, 80, 50, 10,  20, WHITE  ) ;
+	lcd.drawEllipse(60, 80, 50, 10,  10, MAGENTA) ;
+	lcd.drawEllipse(60, 80, 50, 10,   0, YELLOW ) ;
+	lcd.drawEllipse(60, 80, 50, 10, -10, CYAN   ) ;
+	lcd.drawEllipse(60, 80, 50, 10, -20, RED    ) ;
+	lcd.drawEllipse(60, 80, 50, 10, -30, GREEN  ) ;
+	lcd.drawEllipse(60, 80, 50, 10, -40, BLUE   ) ;
+	lcd.drawEllipse(60, 80, 50, 10, -50, WHITE  ) ;
+	lcd.drawEllipse(60, 80, 50, 10, -60, MAGENTA) ;
+	lcd.drawEllipse(60, 80, 50, 10, -70, YELLOW ) ;
+	lcd.drawEllipse(60, 80, 50, 10, -80, CYAN   ) ;
+	delay(2000) ;
+	clearScreen(lcd) ;
+	const int delta = 8 ;
+	int iPrevious = 0 ;
+	for (int i = 6 ; i <= 54 ; i+=delta ) {
+		lcd.drawEllipse(60, 80, 54, i,         20, GREEN) ;   // Draw new.
+		if (iPrevious>0) {
+			lcd.drawEllipse(60, 80, 54, iPrevious, 20, BLACK);// Erase previous.
+		}
+		iPrevious = i ;
+	}
+	for (int i = 46 ; i >= 6 ; i-=delta) {
+		lcd.drawEllipse(60, 80, 54, i,         20, GREEN) ;  // Draw new.
+		lcd.drawEllipse(60, 80, 54, iPrevious, 20, BLACK) ;  // Erase previous.
+		iPrevious = i ;
+	}
+	delay(2000) ;
+	clearScreen(lcd) ;
+	//
 	// Set up ball parameters
 	//
 	ball[0].setBallColor(YELLOW)
-			.setTrailColor(RED)
-			.setRadius(2)
-			.setXCurrent(50)
-			.setYCurrent(50)
-			 .setYVel(-ball[0].getYVel())
-			.begin() ;
+					.setTrailColor(RED)
+					.setRadius(2)
+					.setXCurrent(50)
+					.setYCurrent(50)
+					.setYVel(-ball[0].getYVel())
+					.begin() ;
 	ball[1].setBallColor(CYAN)
-	    .setTrailColor(YELLOW)
-	    .begin() ;
+	    		.setTrailColor(YELLOW)
+	    		.begin() ;
 	ball[2].setBallColor(MAGENTA)
-			.setTrailColor(GREEN)
-			.setRadius(8)
-			.setXCurrent(50)
-			.setYCurrent(ball[2].getRadius())
-			.setXVel(-ball[2].getXVel())
-			.begin() ;
+					.setTrailColor(GREEN)
+					.setRadius(8)
+					.setXCurrent(50)
+					.setYCurrent(ball[2].getRadius())
+					.setXVel(-ball[2].getXVel())
+					.begin() ;
 }
-
-// The loop function is called in an endless loop
 void loop() {
-//Add your repeated code here
 	//
 	// Knowing when it is time to switch trail colors
 	//
