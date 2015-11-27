@@ -1221,12 +1221,6 @@ void GL_ST7735::drawEllipse(int xc,
 	double xEnd   = (double)xc - (double)semiMajor * cosTheta ;
 	double yEnd   = (double)yc - (double)semiMajor * sinTheta ;
 
-//	long A9 = A ;
-//	long B9 = B ;
-//	long C9 = C ;
-//	long D9 = D ;
-//	long E9 = E ;
-//	long F9 = F ;
 	assign(A, B, C, D, E, F) ;
 
 	drawConicHelper(
