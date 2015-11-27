@@ -267,6 +267,10 @@ void setup()
 		iPrevious = i ;
 	}
 	delay(2000) ;
+	lcd.setInverted(true) ;
+	delay(2000) ;
+	lcd.setInverted(false) ;
+	delay(2000) ;
 	clearScreen(lcd) ;
 	//
 	// Set up ball parameters
