@@ -1273,6 +1273,14 @@ int GL_ST7735::getOctant(long gx, long gy)
       return 8 - upper;
 }
 
+void GL_ST7735::setInverted(boolean b) {
+	if (b) {
+		writecommand(ST7735_INVON);
+	} else {
+		writecommand(ST7735_INVOFF);
+	}
+}
+
 
 //////////
 /*

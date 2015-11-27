@@ -143,6 +143,9 @@ class GL_ST7735 {
   		int theta,
   		int color) ;
 
+  void setInverted(boolean b) ;
+
+
 
   /*
   // these are not for use, 8-bit protocol only!
