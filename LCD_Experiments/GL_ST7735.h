@@ -60,7 +60,7 @@
 //
 // Set DEBUG to 1 to debug drawing of conic sections.
 //
-#define DEBUG 1
+#define DEBUG 0
 //
 // if DEBUG is set to a non-zero value, then the SPEED must
 // be set to a bit rate appropriate for the Serial port.
